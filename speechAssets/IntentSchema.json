@@ -1,7 +1,7 @@
 {
   "intents": [
     {
-      "intent": "FeelsIntent",
+      "intent": "TellFeelingsIntent",
       "slots": [
       	{
 	      	"name":	"subject",
@@ -12,6 +12,15 @@
       		"type":	"CUSTOM_FEELING"
       	}
       ]
+    },
+    {
+        "intent": "RecallFeelingsIntent",
+        "slots": [
+            {
+                "name": "subject",
+                "type": "CUSTOM_NAME"
+            }
+        ]
     },
     {
       "intent": "AMAZON.HelpIntent"

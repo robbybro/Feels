@@ -1,3 +1,3 @@
-FeelsIntent I {feeling} {subject}
-FeelsIntent tell {subject} that I {feeling}
-FeelsIntent tell me how I feel about {subject}
+TellFeelingsIntent I {feeling} {subject}
+TellFeelingsIntent tell {subject} that I {feeling}
+RecallFeelingsIntent how I feel about {subject}
