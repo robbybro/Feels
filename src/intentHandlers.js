@@ -2,7 +2,7 @@
 
 var storage = require('./storage');
 
-var registerIntentHandlers = function (intentHandlers, skillContext) {
+var registerIntentHandlers = function (intentHandlers) {
     intentHandlers.TellFeelingsIntent = function (intent, session, response) {
         var subject = intent.slots.subject.value,
             feeling = intent.slots.feeling.value;
@@ -20,9 +20,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         storage.loadFeelings(session, subject, function (feelings) {
             console.log('feelingsss', feelings);
             if (feelings[subject]) {
-                response.tell(
-                    'you feel ' + feelings[subject] + ' about ' + subject
-                );
+                response.tell('you ' + feelings[subject] + ' ' + subject);
             }
             else {
                 response.tell(

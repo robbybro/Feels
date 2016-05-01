@@ -1,11 +1,12 @@
+// TODO: update subjects to include all nouns instead of just people
+// TODO: export strings to their own deal
 'use strict';
 
 var AlexaSkill = require('./AlexaSkill'),
     config = require('./config'),
     eventHandlers = require('./eventHandlers'),
     intentHandlers = require('./intentHandlers'),
-    APP_ID = config.appId,
-    skillContext = {}
+    APP_ID = config.appId
 ;
 
 var Feels = function () {
@@ -16,12 +17,11 @@ var Feels = function () {
 Feels.prototype = Object.create(AlexaSkill.prototype);
 Feels.prototype.constructor = Feels;
 
-eventHandlers.register(Feels.prototype.eventHandlers, skillContext);
-intentHandlers.register(Feels.prototype.intentHandlers, skillContext);
+eventHandlers.register(Feels.prototype.eventHandlers);
+intentHandlers.register(Feels.prototype.intentHandlers);
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
-    // Create an instance of the Feels skill.
     var feels = new Feels();
     feels.execute(event, context);
 };

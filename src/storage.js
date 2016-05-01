@@ -1,41 +1,33 @@
 'use strict';
 var AWS = require("aws-sdk"),
     tableName = 'FeelingsData';
+
+// composite userId and subject for querying dynamo
+function compositeKey(userId, subject) {
+    return userId + subject;
+}
+
 var storage = (function () {
     var dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-
-    /*
-     * The Feelings class stores all the feelings for the user
-     */
-    function Feelings(session, data) {
-        if (data && data.length) {
-            this.data = data;
-        }
-        else {
-            this.data = {}; // subject:feeling
-        }
-        this._session = session;
-    }
-
-    Feelings.prototype = {};
 
     return {
         loadFeelings: function (session, subject, callback) {
             console.log('subject to query by: ', subject);
+            // UserAndSubject key is a composite key because apparently
+            // dynamodb doesn't support AND'ing. You can get one item or
+            // nothing. Composite the subject and user id so you can find
+            // items by user and subject later.
             dynamodb.getItem({
                 TableName: tableName,
                 Key: {
                     UserAndSubjectKey: {
-                        S: (session.user.userId + subject),
+                        S: compositeKey(session.user.userId, subject),
                     },
                 }
             }, function (err, data) {
                 var currentFeelings = {};
                 if (err) {
-                    console.log('query unsuccessful');
-                    console.log(err, err.stack);
-                    // currentFeelings = new Feelings(session);
-                    // session.attributes.currentFeelings = currentFeelings.data;
+                    console.log('query unsuccessful', err, err.stack);
                     callback(currentFeelings);
                 }
                 else if (!data.Item) {
@@ -47,24 +39,20 @@ var storage = (function () {
                 }
                 else {
                     console.log('query successful, data returned', data);
-                    console.log('Subject', data.Item.Subject.S, 'Feeling, data.Item.Feeling.S');
                     currentFeelings[data.Item.Subject.S] = data.Item.Feeling.S;
-
-                    // session.attributes.currentFeelings = currentFeelings;
                     callback(currentFeelings);
                 }
             });
         },
         save: function (session, subject, feeling, callback) {
-            // save feelings to db
-            // var currentFeelings = {};
-            // currentFeelings[subject] = feeling;
-            // console.log('currentFeelings', currentFeelings);
+            // TODO: check to see if a feeling has already been saved
+            // for the subject and ask user if they'd like to overwrite it
+            // if there is one
             dynamodb.putItem({
                 TableName: tableName,
                 Item: {
                     UserAndSubjectKey: {
-                        S: session.user.userId + subject,
+                        S: compositeKey(session.user.userId, subject),
                     },
                     Subject: {
                         S: subject,
